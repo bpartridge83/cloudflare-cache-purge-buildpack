@@ -6,7 +6,7 @@
 getZones() {
   local result=$(curl -L --silent \
     -X GET "https://api.cloudflare.com/client/v4/zones" \
-    -H "Authorization: bearer ${CF_AUTH_TOKEN}" \
+    -H "Authorization: Bearer ${CF_AUTH_TOKEN}" \
     -H "Content-Type: application/json")
   echo "$result"
 }

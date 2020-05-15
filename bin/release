@@ -1,3 +1,25 @@
 #!/bin/sh
 
-echo "--- {}"
+purgeCache() {
+  local result=$(curl -L --write-out %{http_code} --silent --output /dev/null \
+    -X POST "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/purge_cache" \
+    -H "Authorization: Bearer ${CF_AUTH_TOKEN}" \
+		-H "Content-Type: application/json" \
+    --data '{"purge_everything":true}')
+  echo "$result"
+}
+
+if [ -z ${CF_AUTH_TOKEN+x} ]; then
+  echo "-----> Not purging Cloudflare cache"
+  echo "       Set CF_ZONE_ID, CF_AUTH_TOKEN & CF_EMAIL"
+else
+  echo "-----> Purging Cloudflare cache"
+
+  result=$(purgeCache)
+
+  if [ $result -ne "200" ]; then
+    echo "       Failed: ${result}"
+  else
+    echo "       Success: ${result}"
+  fi
+fi
